@@ -9,7 +9,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.content.ContextCompat;
+import android.support.graphics.drawable.VectorDrawableCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -41,6 +41,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
     private static final long DISPLAY_TIME_IN_SECONDS = 3000;
 
     //UI
+    private FrameLayout flClickShield;
     private FrameLayout flBackground;
     private TextView tvTitle;
     private TextView tvText;
@@ -62,6 +63,10 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
      * Flag to ensure we only set the margins once
      */
     private boolean marginSet;
+    /**
+     * Flag to enable / disable haptic feedback
+     */
+    private boolean vibrationEnabled = true;
 
     /**
      * This is the default view constructor. It requires a Context, and holds a reference to it.
@@ -104,6 +109,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         setHapticFeedbackEnabled(true);
 
         flBackground = (FrameLayout) findViewById(R.id.flAlertBackground);
+        flClickShield = (FrameLayout) findViewById(R.id.flClickShield);
         ivIcon = (ImageView) findViewById(R.id.ivIcon);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvText = (TextView) findViewById(R.id.tvText);
@@ -172,7 +178,9 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
     @Override
     public void onAnimationStart(final Animation animation) {
         if (!isInEditMode()) {
-            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            if (vibrationEnabled) {
+                performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            }
             setVisibility(View.VISIBLE);
         }
     }
@@ -317,6 +325,10 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         setText(getContext().getString(textId));
     }
 
+    public int getContentGravity() {
+        return ((LayoutParams) rlContainer.getLayoutParams()).gravity;
+    }
+
     /**
      * Sets the Gravity of the Alert
      *
@@ -327,8 +339,11 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         rlContainer.requestLayout();
     }
 
-    public int getContentGravity() {
-        return ((LayoutParams) rlContainer.getLayoutParams()).gravity;
+    /**
+     * Disable touches while the Alert is showing
+     */
+    public void disableOutsideTouch() {
+        flClickShield.setClickable(true);
     }
 
     public FrameLayout getAlertBackground() {
@@ -377,7 +392,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
      * @param iconId Drawable resource id of the icon to use in the Alert
      */
     public void setIcon(@DrawableRes final int iconId) {
-        final Drawable iconDrawable = ContextCompat.getDrawable(getContext(), iconId);
+        final Drawable iconDrawable = VectorDrawableCompat.create(getContext().getResources(), iconId, null);
         ivIcon.setImageDrawable(iconDrawable);
     }
 
@@ -451,5 +466,14 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
      */
     public void setOnHideListener(@NonNull final OnHideAlertListener listener) {
         this.onHideListener = listener;
+    }
+
+    /**
+     * Enable or Disable haptic feedback
+     *
+     * @param vibrationEnabled True to enable, false to disable
+     */
+    public void setVibrationEnabled(final boolean vibrationEnabled) {
+        this.vibrationEnabled = vibrationEnabled;
     }
 }
