@@ -2,17 +2,22 @@ package com.tapadoo.alerter;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.tapadoo.android.R;
 
 import java.lang.ref.WeakReference;
 
@@ -49,7 +54,7 @@ public final class Alerter {
 
         final Alerter alerter = new Alerter();
 
-        //Clear Current Alert, if one is Active
+        //Hide current Alert, if one is active
         Alerter.clearCurrent(activity);
 
         alerter.setActivity(activity);
@@ -60,8 +65,10 @@ public final class Alerter {
 
     /**
      * Cleans up the currently showing alert view, if one is present
+     *
+     * @param activity The current Activity
      */
-    private static void clearCurrent(@NonNull final Activity activity) {
+    public static void clearCurrent(@NonNull final Activity activity) {
         if (activity == null) {
             return;
         }
@@ -82,14 +89,41 @@ public final class Alerter {
         }
     }
 
+    /**
+     * Hides the currently showing alert view, if one is present
+     */
+    public static void hide() {
+        if (activityWeakReference != null && activityWeakReference.get() != null) {
+            clearCurrent(activityWeakReference.get());
+        }
+    }
+
     @NonNull
     private static Runnable getRemoveViewRunnable(final Alert childView) {
         return new Runnable() {
             @Override
             public void run() {
-                ((ViewGroup) childView.getParent()).removeView(childView);
+                try {
+                    ((ViewGroup) childView.getParent()).removeView(childView);
+                } catch (Exception e) {
+                    Log.e(getClass().getSimpleName(), Log.getStackTraceString(e));
+                }
             }
         };
+    }
+
+    /**
+     * Check if an Alert is currently showing
+     *
+     * @return True if an Alert is showing, false otherwise
+     */
+    public static boolean isShowing() {
+        boolean isShowing = false;
+        if (activityWeakReference != null && activityWeakReference.get() != null) {
+            isShowing = activityWeakReference.get().findViewById(R.id.flAlertBackground) != null;
+        }
+
+        return isShowing;
     }
 
     /**
@@ -116,15 +150,6 @@ public final class Alerter {
     }
 
     /**
-     * Hides currently showing alert.
-     */
-    public void hide() {
-        if (getAlert() != null) {
-            getAlert().hide();
-        }
-    }
-
-    /**
      * Sets the title of the Alert
      *
      * @param titleId Title String Resource
@@ -147,6 +172,34 @@ public final class Alerter {
     public Alerter setTitle(final String title) {
         if (getAlert() != null) {
             getAlert().setTitle(title);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Title's Typeface
+     *
+     * @param typeface Typeface to use
+     * @return This Alerter
+     */
+    public Alerter setTitleTypeface(@NonNull final Typeface typeface) {
+        if (getAlert() != null) {
+            getAlert().setTitleTypeface(typeface);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Title's text appearance
+     *
+     * @param textAppearance The style resource id
+     * @return This Alerter
+     */
+    public Alerter setTitleAppearance(@StyleRes final int textAppearance) {
+        if (getAlert() != null) {
+            getAlert().setTitleAppearance(textAppearance);
         }
 
         return this;
@@ -195,12 +248,54 @@ public final class Alerter {
     }
 
     /**
+     * Set the Text's Typeface
+     *
+     * @param typeface Typeface to use
+     * @return This Alerter
+     */
+    public Alerter setTextTypeface(@NonNull final Typeface typeface) {
+        if (getAlert() != null) {
+            getAlert().setTextTypeface(typeface);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Text's text appearance
+     *
+     * @param textAppearance The style resource id
+     * @return This Alerter
+     */
+    public Alerter setTextAppearance(@StyleRes final int textAppearance) {
+        if (getAlert() != null) {
+            getAlert().setTextAppearance(textAppearance);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Alert's Background Colour
+     *
+     * @param colorInt Colour int value
+     * @return This Alerter
+     */
+    public Alerter setBackgroundColorInt(@ColorInt final int colorInt) {
+        if (getAlert() != null) {
+            getAlert().setAlertBackgroundColor(colorInt);
+        }
+
+        return this;
+    }
+
+    /**
      * Set the Alert's Background Colour
      *
      * @param colorResId Colour Resource Id
      * @return This Alerter
      */
-    public Alerter setBackgroundColor(@ColorRes final int colorResId) {
+    public Alerter setBackgroundColorRes(@ColorRes final int colorResId) {
         if (getAlert() != null && getActivityWeakReference() != null) {
             getAlert().setAlertBackgroundColor(ContextCompat.getColor(getActivityWeakReference().get(), colorResId));
         }
@@ -259,6 +354,20 @@ public final class Alerter {
     public Alerter setIcon(@NonNull final Bitmap bitmap) {
         if (getAlert() != null) {
             getAlert().setIcon(bitmap);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Alert's Icon
+     *
+     * @param drawable The Drawable to use for the icon.
+     * @return This Alerter
+     */
+    public Alerter setIcon(@NonNull final Drawable drawable) {
+        if (getAlert() != null) {
+            getAlert().setIcon(drawable);
         }
 
         return this;
@@ -370,6 +479,18 @@ public final class Alerter {
     }
 
     /**
+     * Enables swipe to dismiss
+     *
+     * @return This Alerter
+     */
+    public Alerter enableSwipeToDismiss() {
+        if (getAlert() != null) {
+            getAlert().enableSwipeToDismiss();
+        }
+        return this;
+    }
+
+    /**
      * Enable or Disable Vibration
      *
      * @param enable True to enable, False to disable
@@ -391,6 +512,20 @@ public final class Alerter {
     public Alerter disableOutsideTouch() {
         if (getAlert() != null) {
             getAlert().disableOutsideTouch();
+        }
+
+        return this;
+    }
+
+    /**
+     * Enable or disable progress bar
+     *
+     * @param enable True to enable, False to disable
+     * @return This Alerter
+     */
+    public Alerter enableProgress(final boolean enable) {
+        if (getAlert() != null) {
+            getAlert().setEnableProgress(enable);
         }
 
         return this;

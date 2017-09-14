@@ -1,7 +1,10 @@
 package com.tapadoo.alerter;
 
+import android.animation.ValueAnimator;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -9,6 +12,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.annotation.StyleRes;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -19,8 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.tapadoo.android.R;
@@ -31,7 +37,7 @@ import com.tapadoo.android.R;
  * @author Kevin Murphy, Tapadoo, Dublin, Ireland, Europe, Earth.
  * @since 26/01/2016
  **/
-public class Alert extends FrameLayout implements View.OnClickListener, Animation.AnimationListener {
+public class Alert extends FrameLayout implements View.OnClickListener, Animation.AnimationListener, SwipeDismissTouchListener.DismissCallbacks {
 
     private static final int CLEAN_UP_DELAY_MILLIS = 100;
 
@@ -47,6 +53,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
     private TextView tvText;
     private ImageView ivIcon;
     private ViewGroup rlContainer;
+    private ProgressBar pbProgress;
 
     private Animation slideInAnimation;
     private Animation slideOutAnimation;
@@ -58,6 +65,9 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
 
     private boolean enableIconPulse = true;
     private boolean enableInfiniteDuration;
+    private boolean enableProgress;
+
+    private Runnable runningAnimation;
 
     /**
      * Flag to ensure we only set the margins once
@@ -114,6 +124,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvText = (TextView) findViewById(R.id.tvText);
         rlContainer = (ViewGroup) findViewById(R.id.rlContainer);
+        pbProgress = (ProgressBar) findViewById(R.id.pbProgress);
 
         flBackground.setOnClickListener(this);
 
@@ -181,6 +192,7 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
             if (vibrationEnabled) {
                 performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             }
+
             setVisibility(View.VISIBLE);
         }
     }
@@ -200,15 +212,35 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
             onShowListener.onShow();
         }
 
+        startHideAnimation();
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    private void startHideAnimation() {
         //Start the Handler to clean up the Alert
         if (!enableInfiniteDuration) {
-            postDelayed(new Runnable() {
+            runningAnimation = new Runnable() {
                 @Override
                 public void run() {
                     hide();
                 }
-            }, duration);
+            };
+            postDelayed(runningAnimation, duration);
         }
+
+        if (enableProgress && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            final ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 100);
+            valueAnimator.setDuration(duration);
+            valueAnimator.setInterpolator(new LinearInterpolator());
+            valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(final ValueAnimator animation) {
+                    pbProgress.setProgress((int) animation.getAnimatedValue());
+                }
+            });
+            valueAnimator.start();
+        }
+
     }
 
     @Override
@@ -366,6 +398,37 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         }
     }
 
+    /**
+     * Set the Title's text appearance of the Title
+     *
+     * @param textAppearance The style resource id
+     */
+    public void setTitleAppearance(@StyleRes final int textAppearance) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tvTitle.setTextAppearance(textAppearance);
+        } else {
+            tvTitle.setTextAppearance(tvTitle.getContext(), textAppearance);
+        }
+    }
+
+    /**
+     * Set the Title's typeface
+     *
+     * @param typeface The typeface to use
+     */
+    public void setTitleTypeface(@NonNull final Typeface typeface) {
+        tvTitle.setTypeface(typeface);
+    }
+
+    /**
+     * Set the Text's typeface
+     *
+     * @param typeface The typeface to use
+     */
+    public void setTextTypeface(@NonNull final Typeface typeface) {
+        tvText.setTypeface(typeface);
+    }
+
     public TextView getText() {
         return tvText;
     }
@@ -379,6 +442,19 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
         if (!TextUtils.isEmpty(text)) {
             tvText.setVisibility(VISIBLE);
             tvText.setText(text);
+        }
+    }
+
+    /**
+     * Set the Text's text appearance of the Title
+     *
+     * @param textAppearance The style resource id
+     */
+    public void setTextAppearance(@StyleRes final int textAppearance) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            tvText.setTextAppearance(textAppearance);
+        } else {
+            tvText.setTextAppearance(tvText.getContext(), textAppearance);
         }
     }
 
@@ -406,12 +482,28 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
     }
 
     /**
+     * Set the inline icon for the Alert
+     *
+     * @param drawable Drawable image of the icon to use in the Alert.
+     */
+    public void setIcon(@NonNull final Drawable drawable) {
+        ivIcon.setImageDrawable(drawable);
+    }
+
+    /**
      * Set whether to show the icon in the alert or not
      *
      * @param showIcon True to show the icon, false otherwise
      */
     public void showIcon(final boolean showIcon) {
         ivIcon.setVisibility(showIcon ? View.VISIBLE : View.GONE);
+    }
+
+    /**
+     * Set whether to enable swipe to dismiss or not
+     */
+    public void enableSwipeToDismiss() {
+        flBackground.setOnTouchListener(new SwipeDismissTouchListener(flBackground, null, this));
     }
 
     /**
@@ -451,6 +543,15 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
     }
 
     /**
+     * Enable or disable progress bar
+     *
+     * @param enableProgress True to enable, False to disable
+     */
+    public void setEnableProgress(final boolean enableProgress) {
+        this.enableProgress = enableProgress;
+    }
+
+    /**
      * Set the alert's listener to be fired on the alert being fully shown
      *
      * @param listener Listener to be fired
@@ -475,5 +576,24 @@ public class Alert extends FrameLayout implements View.OnClickListener, Animatio
      */
     public void setVibrationEnabled(final boolean vibrationEnabled) {
         this.vibrationEnabled = vibrationEnabled;
+    }
+
+    @Override
+    public boolean canDismiss(final Object token) {
+        return true;
+    }
+
+    @Override
+    public void onDismiss(final View view, final Object token) {
+        flClickShield.removeView(flBackground);
+    }
+
+    @Override
+    public void onTouch(final View view, final boolean touch) {
+        if (touch) {
+            removeCallbacks(runningAnimation);
+        } else {
+            startHideAnimation();
+        }
     }
 }

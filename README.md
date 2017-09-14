@@ -18,7 +18,7 @@ all content.
 
 ```groovy
 dependencies {
-    compile 'com.tapadoo.android:alerter:1.0.8'
+    compile 'com.tapadoo.android:alerter:2.0.0'
 }
 ```
 
@@ -45,6 +45,19 @@ Alerter.create(getActivity())
        .show();
 ```
 
+To check if an alert is showing - 
+
+
+```java
+Alerter.isShowing();
+```
+
+To hide a currently showing Alert - 
+
+```java
+Alerter.hide();
+```
+
 # Customisation
 
 ### Background Colour
@@ -53,7 +66,7 @@ Alerter.create(getActivity())
 Alerter.create(this)
        .setTitle("Alert Title")
        .setText("Alert text...")
-       .setBackgroundColor(R.color.colorAccent)
+       .setBackgroundColorRes(R.color.colorAccent) // or setBackgroundColorInt(Color.CYAN)
        .show();
 ```
 
@@ -141,6 +154,44 @@ Alerter.create(this)
         .show();
 ```
 
+### Custom Fonts and Text Appearance
+
+```java 
+ Alerter.create(ExampleActivity.this)
+                .setTitle("Alert Title")
+                .setTitleAppearance(R.style.AlertTextAppearance_Title)
+                .setTitleTypeface(Typeface.createFromAsset(getAssets(), "Pacifico-Regular.ttf"))
+                .setText("Alert text...")
+                .setTextAppearance(R.style.AlertTextAppearance_Text)
+                .setTextTypeface(Typeface.createFromAsset(getAssets(), "ScopeOne-Regular.ttf"))
+                .show();
+```
+
+![Verbose Alert](./documentation/alert_custom_font.gif)
+
+### Swipe to Dismiss
+
+```java
+ Alerter.create(ExampleActivity.this)
+                .setTitle("Alert Title")
+                .setText("Alert text...")
+                .enableSwipeToDismiss()
+                .show();
+```
+![Verbose Alert](./documentation/alert_swipe_to_dismiss.gif)
+
+### Progress Bar
+
+```java
+Alerter.create(ExampleActivity.this)
+                .setTitle("Alert Title")
+                .setText("Alert text...")
+                .enableProgress(true)
+                .show();
+```
+
+![Verbose Alert](./documentation/alert_progress_bar.gif)
+
 ## Sample
 
 Clone this repo and check out the `app` module.
@@ -152,9 +203,3 @@ See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 Copyright 2016 Tapadoo, Dublin.
 
 ![Alt Text](http://tapadoo.com/wp-content/themes/tapadoo/img/tapadoo-logo@2x.png)
-
-
-
-
-
-
