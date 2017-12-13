@@ -532,11 +532,39 @@ public final class Alerter {
     }
 
     /**
+     * Set the Progress bar color from a color resource
+     *
+     * @param color The color resource
+     * @return This Alerter
+     */
+    public Alerter setProgressColorRes(@ColorRes final int color) {
+        if (getAlert() != null) {
+            getAlert().setProgressColorRes(color);
+        }
+
+        return this;
+    }
+
+    /**
+     * Set the Progress bar color from a color resource
+     *
+     * @param color The color resource
+     * @return This Alerter
+     */
+    public Alerter setProgressColorInt(@ColorInt final int color) {
+        if (getAlert() != null) {
+            getAlert().setProgressColorInt(color);
+        }
+
+        return this;
+    }
+
+    /**
      * Gets the Alert associated with the Alerter
      *
      * @return The current Alert
      */
-    private Alert getAlert() {
+    Alert getAlert() {
         return alert;
     }
 
@@ -550,7 +578,7 @@ public final class Alerter {
     }
 
     @Nullable
-    private WeakReference<Activity> getActivityWeakReference() {
+    WeakReference<Activity> getActivityWeakReference() {
         return activityWeakReference;
     }
 
@@ -560,7 +588,7 @@ public final class Alerter {
      * @return The Decor View of the Activity the Alerter was called from
      */
     @Nullable
-    private ViewGroup getActivityDecorView() {
+    ViewGroup getActivityDecorView() {
         ViewGroup decorView = null;
 
         if (getActivityWeakReference() != null && getActivityWeakReference().get() != null) {
