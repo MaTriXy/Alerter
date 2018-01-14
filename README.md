@@ -1,5 +1,7 @@
 # Alerter
 
+![Icon](./app/src/main/res/mipmap-xxxhdpi/ic_launcher.png)
+
 ### General
 
 [ ![Download](https://api.bintray.com/packages/tapadoo/maven/alerter/images/download.svg) ](https://bintray.com/tapadoo/maven/alerter/_latestVersion)
@@ -18,7 +20,7 @@ all content.
 
 ```groovy
 dependencies {
-    compile 'com.tapadoo.android:alerter:2.0.2'
+    implementation 'com.tapadoo.android:alerter:2.0.3'
 }
 ```
 
@@ -77,7 +79,8 @@ Alerter.create(this)
 ```java
 Alerter.create(this)
        .setText("Alert text...")
-       .setIcon(R.drawable.alerter_ic_face)
+       .setIcon(R.drawable.alerter_ic_mail_outline)
+       .setIconColorFilter(0) // Optional - Removes white tint
        .show();
 ```
 
@@ -201,6 +204,6 @@ Clone this repo and check out the `app` module.
 
 See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 
-Copyright 2016 Tapadoo, Dublin.
+Copyright 2017 Tapadoo, Dublin.
 
 ![Alt Text](http://tapadoo.com/wp-content/themes/tapadoo/img/tapadoo-logo@2x.png)
