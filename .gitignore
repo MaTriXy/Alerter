@@ -45,4 +45,5 @@ captures/
 obj/
 libs/
 
-keystore.properties
+#Signing Keys
+keystore
