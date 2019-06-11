@@ -16,8 +16,22 @@ A customisable Alert view is dynamically added to the Decor View of the Window, 
 
 ```groovy
 dependencies {
-    implementation 'com.tapadoo.android:alerter:2.0.6'
+    implementation 'com.tapadoo.android:alerter:4.0.2'
 }
+```
+
+## Kotlin
+
+Version 3.0.0 and above requires Kotlin
+
+## AndroidX
+
+Version 4.0.0 includes support for AndroidX dependencies. If you experience issues with this update, 
+please ensure you have enabled AndroidX & Jetifier in your `gradle.properties` file:
+
+```properties
+android.useAndroidX=true
+android.enableJetifier=true
 ```
 
 # Usage
@@ -129,6 +143,17 @@ Alerter.create(this@DemoActivity)
 
 ![Verbose Alert](./documentation/alert_verbose.gif)
 
+### Custom Enter/Exit Animations
+
+```kotlin
+  Alerter.create(this@KotlinDemoActivity)
+         .setTitle("Alert Title")
+         .setText("Alert text...")
+         .setEnterAnimation(R.anim.alerter_slide_in_from_left)
+         .setExitAnimation(R.anim.alerter_slide_out_to_right)
+         .show()
+```
+
 ### Visibility Callbacks
 
 ```kotlin
@@ -184,9 +209,26 @@ Alerter.create(this@DemoActivity)
 
 ![Verbose Alert](./documentation/alert_progress_bar.gif)
 
+### With Buttons
+
+```kotlin
+ Alerter.create(this@KotlinDemoActivity)
+        .setTitle(R.string.title_activity_example)
+        .setText("Alert text...")
+        .addButton("Okay", R.style.AlertButton, View.OnClickListener {
+            Toast.makeText(this@KotlinDemoActivity, "Okay Clicked", Toast.LENGTH_LONG).show()
+        })
+        .addButton("No", R.style.AlertButton, View.OnClickListener {
+            Toast.makeText(this@KotlinDemoActivity, "No Clicked", Toast.LENGTH_LONG).show()
+        })
+        .show()
+```
+
+![Verbose Alert](./documentation/alert_with_buttons.gif)
+
 ## Sample
 
-Clone this repo and check out the `app` module.
+Clone this repo and check out the `app-base` module.
 
 ## Licence
 
@@ -194,4 +236,4 @@ See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 
 Copyright 2017 Tapadoo, Dublin.
 
-![Alt Text](http://tapadoo.com/wp-content/themes/tapadoo/img/tapadoo-logo@2x.png)
+![Alt Text](https://tapadoo.com/wp-content/themes/tapadoo/assets/images/tapadoo_logo_dark.png)

@@ -6,11 +6,12 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import android.support.annotation.*
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.ViewCompat
+import androidx.annotation.*
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import java.lang.ref.WeakReference
 
 /**
@@ -53,10 +54,10 @@ class Alerter private constructor() {
     fun show(): Alert? {
         //This will get the Activity Window's DecorView
         activityWeakReference?.get()?.let {
-            it.runOnUiThread({
+            it.runOnUiThread {
                 //Add the new Alert to the View Hierarchy
                 activityDecorView?.addView(alert)
-            })
+            }
         }
 
         return alert
@@ -77,10 +78,10 @@ class Alerter private constructor() {
     /**
      * Set Title of the Alert
      *
-     * @param title Title as a String
+     * @param title Title as a CharSequence
      * @return This Alerter
      */
-    fun setTitle(title: String): Alerter {
+    fun setTitle(title: CharSequence): Alerter {
         alert?.setTitle(title)
 
         return this
@@ -137,10 +138,10 @@ class Alerter private constructor() {
     /**
      * Sets the Alert Text
      *
-     * @param text String of Alert Text
+     * @param text CharSequence of Alert Text
      * @return This Alerter
      */
-    fun setText(text: String): Alerter {
+    fun setText(text: CharSequence): Alerter {
         alert?.setText(text)
 
         return this
@@ -462,10 +463,61 @@ class Alerter private constructor() {
      * Set if the Alert is dismissable or not
      *
      * @param dismissable true if it can be dismissed
-     * @return
+     * @return This Alerter
      */
     fun setDismissable(dismissable: Boolean): Alerter {
-        alert?.setDismissable(dismissable)
+        alert?.setDismissible(dismissable)
+
+        return this
+    }
+
+    /**
+     * Set a Custom Enter Animation
+     *
+     * @param animation The enter animation to play
+     * @return This Alerter
+     */
+    fun setEnterAnimation(@AnimRes animation: Int): Alerter {
+        alert?.enterAnimation = AnimationUtils.loadAnimation(alert?.context, animation)
+
+        return this
+    }
+
+    /**
+     * Set a Custom Exit Animation
+     *
+     * @param animation The exit animation to play
+     * @return This Alerter
+     */
+    fun setExitAnimation(@AnimRes animation: Int): Alerter {
+        alert?.exitAnimation = AnimationUtils.loadAnimation(alert?.context, animation)
+
+        return this
+    }
+
+    /**
+     * Show a button with the given text, and on click listener
+     *
+     * @param text The text to display on the button
+     * @param onClick The on click listener
+     */
+    fun addButton(
+        text: CharSequence, @StyleRes style: Int = R.style.AlertButton,
+        onClick: View.OnClickListener
+    ): Alerter {
+        alert?.addButton(text, style, onClick)
+
+        return this
+    }
+
+    /**
+     * Set the Button's Typeface
+     *
+     * @param typeface Typeface to use
+     * @return This Alerter
+     */
+    fun setButtonTypeface(typeface: Typeface): Alerter {
+        alert?.buttonTypeFace = typeface
 
         return this
     }
@@ -545,7 +597,7 @@ class Alerter private constructor() {
                 var isShowing = false
 
                 activityWeakReference?.get()?.let {
-                    isShowing = it.findViewById<View>(R.id.flAlertBackground) != null
+                    isShowing = it.findViewById<View>(R.id.llAlertBackground) != null
                 }
 
                 return isShowing

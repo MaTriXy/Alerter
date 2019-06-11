@@ -2,10 +2,10 @@ package com.tapadoo.alerter
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import android.support.test.filters.LargeTest
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
-import android.support.v4.content.ContextCompat
+import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
+import androidx.test.runner.AndroidJUnit4
+import androidx.core.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -102,9 +102,9 @@ class AlerterTest {
                 .setBackgroundColorRes(android.R.color.darker_gray)
                 .show()
 
-        Assert.assertNotNull(alert?.findViewById<ViewGroup>(R.id.flAlertBackground)?.background)
+        Assert.assertNotNull(alert?.findViewById<ViewGroup>(R.id.llAlertBackground)?.background)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Assert.assertEquals((alert?.findViewById<ViewGroup>(R.id.flAlertBackground)?.background as ColorDrawable).color.toLong(), ContextCompat.getColor(activityRule.activity, android.R.color.darker_gray).toLong())
+            Assert.assertEquals((alert?.findViewById<ViewGroup>(R.id.llAlertBackground)?.background as ColorDrawable).color.toLong(), ContextCompat.getColor(activityRule.activity, android.R.color.darker_gray).toLong())
         }
     }
 
@@ -117,13 +117,13 @@ class AlerterTest {
         //Test default hide listener
         val alert1 = Alerter.create(activityRule.activity).show()
 
-        Assert.assertTrue(alert1?.findViewById<ViewGroup>(R.id.flAlertBackground)?.hasOnClickListeners() ?: false)
+        Assert.assertTrue(alert1?.findViewById<ViewGroup>(R.id.llAlertBackground)?.hasOnClickListeners() ?: false)
 
         //Test setting listener
         val alert3 = Alerter.create(activityRule.activity).setOnClickListener(View.OnClickListener {
             //Ignore
         }).show()
 
-        Assert.assertTrue(alert3?.findViewById<ViewGroup>(R.id.flAlertBackground)?.hasOnClickListeners() ?: false)
+        Assert.assertTrue(alert3?.findViewById<ViewGroup>(R.id.llAlertBackground)?.hasOnClickListeners() ?: false)
     }
 }

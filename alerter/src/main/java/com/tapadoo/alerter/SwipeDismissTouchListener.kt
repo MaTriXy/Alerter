@@ -22,7 +22,7 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.view.View
@@ -32,8 +32,8 @@ import android.view.ViewConfiguration
  * A [View.OnTouchListener] that makes any [View] dismissable when the
  * user swipes (drags her finger) horizontally across the view.
  *
- * @param view     The view to make dismissable.
- * @param callbacks The callback to trigger when the user has indicated that she would like to
+ * @param mView     The view to make dismissable.
+ * @param mCallbacks The callback to trigger when the user has indicated that she would like to
  * dismiss this view.
  */
 internal class SwipeDismissTouchListener(

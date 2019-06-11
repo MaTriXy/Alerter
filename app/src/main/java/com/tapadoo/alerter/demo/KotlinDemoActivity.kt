@@ -1,15 +1,15 @@
-package com.tapadoo.alerter_demo.base
+package com.tapadoo.alerter.demo
 
 import android.graphics.Typeface
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import android.widget.Toast
-
 import com.tapadoo.alerter.Alerter
 import com.tapadoo.alerter.OnHideAlertListener
 import com.tapadoo.alerter.OnShowAlertListener
+import com.tapadoo.alerter.demo.R
 import kotlinx.android.synthetic.main.content_example.*
 
 class KotlinDemoActivity : AppCompatActivity() {
@@ -71,7 +71,7 @@ class KotlinDemoActivity : AppCompatActivity() {
     private fun showAlertVerbose() {
         Alerter.create(this@KotlinDemoActivity)
                 .setTitle("Alert Title")
-                .setText("The alert scales to accommodate larger bodies of text. " +
+                .setText("The alert scales to accommodate larger bodies of text." +
                         "The alert scales to accommodate larger bodies of text. " +
                         "The alert scales to accommodate larger bodies of text.")
                 .show()
@@ -101,10 +101,10 @@ class KotlinDemoActivity : AppCompatActivity() {
 
     private fun showAlertWithProgress() {
         Alerter.create(this@KotlinDemoActivity)
-                .setTitle("Alert Title")
-                .setText("Alert text...")
+                .setTitle("Loading")
+                .setText("Tap to dismiss")
                 .enableProgress(true)
-                .setProgressColorRes(R.color.colorPrimary)
+                .enableInfiniteDuration(true)
                 .show()
     }
 
@@ -126,6 +126,28 @@ class KotlinDemoActivity : AppCompatActivity() {
                 .enableSwipeToDismiss()
                 .setOnHideListener(OnHideAlertListener {
                     Toast.makeText(this@KotlinDemoActivity, "Hide Alert", Toast.LENGTH_LONG).show()
+                })
+                .show()
+    }
+
+    private fun showAlertWithCustomAnimations() {
+        Alerter.create(this@KotlinDemoActivity)
+                .setTitle("Alert Title")
+                .setText("Alert text...")
+                .setEnterAnimation(R.anim.alerter_slide_in_from_left)
+                .setExitAnimation(R.anim.alerter_slide_out_to_right)
+                .show()
+    }
+
+    private fun showAlertWithButtons() {
+        Alerter.create(this@KotlinDemoActivity)
+                .setTitle(R.string.title_activity_example)
+                .setText("Alert text...")
+                .addButton("Okay", R.style.AlertButton, View.OnClickListener {
+                    Toast.makeText(this@KotlinDemoActivity, "Okay Clicked", Toast.LENGTH_LONG).show()
+                })
+                .addButton("No", R.style.AlertButton, View.OnClickListener {
+                    Toast.makeText(this@KotlinDemoActivity, "No Clicked", Toast.LENGTH_LONG).show()
                 })
                 .show()
     }
@@ -174,6 +196,13 @@ class KotlinDemoActivity : AppCompatActivity() {
         btnAlertSwipeToDismissEnabled.setOnClickListener {
             showAlertSwipeToDismissEnabled()
         }
-    }
 
+        btnAlertCustomAnimations.setOnClickListener {
+            showAlertWithCustomAnimations()
+        }
+
+        btnAlertWithButtons.setOnClickListener {
+            showAlertWithButtons()
+        }
+    }
 }

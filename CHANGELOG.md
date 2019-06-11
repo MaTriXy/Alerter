@@ -1,6 +1,25 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## 4.0.3 - 1/5/2019
+* Added support for setting custom typefaces for buttons
+
+## 4.0.2 - 6/3/2019
+* Bug Fixes - Accept CharSequence as parameters instead of String on setTitle, setText, and addButton functions
+
+## 4.0.1 - 27/2/2019
+* Bug Fixes - Removed Unneeded LinearLayoutCompat
+
+## 4.0.0 - 2/12/2018
+* Migrate to AndroidX
+* Added support for Cutout/Notch
+
+## 3.0.2 - 15/11/2018
+* Bug Fixes
+
+## 3.0.1 - 01/11/2018
+* Bug Fixes
+
 ## 3.0.0 - 06/6/2018
 * Converted library to Kotlin
 
