@@ -1,17 +1,22 @@
 package com.tapadoo.alerter
 
 import android.app.Activity
+import android.app.Dialog
 import android.graphics.Bitmap
 import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
-import androidx.annotation.*
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.annotation.*
+import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
 import java.lang.ref.WeakReference
 
 /**
@@ -31,32 +36,15 @@ class Alerter private constructor() {
     private var alert: Alert? = null
 
     /**
-     * Get the enclosing Decor View
-     *
-     * @return The Decor View of the Activity the Alerter was called from
-     */
-    private val activityDecorView: ViewGroup?
-        get() {
-            var decorView: ViewGroup? = null
-
-            activityWeakReference?.get()?.let {
-                decorView = it.window.decorView as ViewGroup
-            }
-
-            return decorView
-        }
-
-    /**
      * Shows the Alert, after it's built
      *
      * @return An Alert object check can be altered or hidden
      */
     fun show(): Alert? {
         //This will get the Activity Window's DecorView
-        activityWeakReference?.get()?.let {
-            it.runOnUiThread {
-                //Add the new Alert to the View Hierarchy
-                activityDecorView?.addView(alert)
+        decorView?.get()?.let {
+            android.os.Handler(Looper.getMainLooper()).post {
+                it.addView(alert)
             }
         }
 
@@ -107,6 +95,18 @@ class Alerter private constructor() {
      */
     fun setTitleAppearance(@StyleRes textAppearance: Int): Alerter {
         alert?.setTitleAppearance(textAppearance)
+
+        return this
+    }
+
+    /**
+     * Set Layout Gravity of the Alert
+     *
+     * @param layoutGravity of Alert
+     * @return This Alerter
+     */
+    fun setLayoutGravity(layoutGravity: Int): Alerter {
+        alert?.layoutGravity = layoutGravity
 
         return this
     }
@@ -190,8 +190,8 @@ class Alerter private constructor() {
      * @return This Alerter
      */
     fun setBackgroundColorRes(@ColorRes colorResId: Int): Alerter {
-        activityWeakReference?.get()?.let {
-            alert?.setAlertBackgroundColor(ContextCompat.getColor(it, colorResId))
+        decorView?.get()?.let {
+            alert?.setAlertBackgroundColor(ContextCompat.getColor(it.context.applicationContext, colorResId))
         }
 
         return this
@@ -258,6 +258,30 @@ class Alerter private constructor() {
     }
 
     /**
+     * Set the Alert's Icon size
+     *
+     * @param size Dimension int.
+     * @return This Alerter
+     */
+    fun setIconSize(@DimenRes size: Int): Alerter {
+        alert?.setIconSize(size)
+
+        return this
+    }
+
+    /**
+     * Set the Alert's Icon size
+     *
+     * @param size Icon size in pixel.
+     * @return This Alerter
+     */
+    fun setIconPixelSize(@Px size: Int): Alerter {
+        alert?.setIconPixelSize(size)
+
+        return this
+    }
+
+    /**
      * Set the icon color for the Alert
      *
      * @param color Color int
@@ -306,6 +330,115 @@ class Alerter private constructor() {
     }
 
     /**
+     * Set the Alert's Right Icon
+     *
+     * @param iconId The Drawable's Resource Idw
+     * @return This Alerter
+     */
+    fun setRightIcon(@DrawableRes rightIconId: Int): Alerter {
+        alert?.setRightIcon(rightIconId)
+
+        return this
+    }
+
+    /**
+     * Set the Alert's Right Icon
+     *
+     * @param bitmap The Bitmap object to use for the right icon.
+     * @return This Alerter
+     */
+    fun setRightIcon(bitmap: Bitmap): Alerter {
+        alert?.setRightIcon(bitmap)
+
+        return this
+    }
+
+    /**
+     * Set the Alert's Right Icon
+     *
+     * @param drawable The Drawable to use for the right icon.
+     * @return This Alerter
+     */
+    fun setRightIcon(drawable: Drawable): Alerter {
+        alert?.setRightIcon(drawable)
+
+        return this
+    }
+
+    /**
+     * Set the Alert's Right Icon size
+     *
+     * @param size Dimension int.
+     * @return This Alerter
+     */
+    fun setRightIconSize(@DimenRes size: Int): Alerter {
+        alert?.setRightIconSize(size)
+
+        return this
+    }
+
+    /**
+     * Set the Alert's Right Icon size
+     *
+     * @param size Right Icon size in pixel.
+     * @return This Alerter
+     */
+    fun setRightIconPixelSize(@Px size: Int): Alerter {
+        alert?.setRightIconPixelSize(size)
+
+        return this
+    }
+
+    /**
+     * Set the right icon color for the Alert
+     *
+     * @param color Color int
+     * @return This Alerter
+     */
+    fun setRightIconColorFilter(@ColorInt color: Int): Alerter {
+        alert?.setRightIconColorFilter(color)
+
+        return this
+    }
+
+    /**
+     * Set the right icon color for the Alert
+     *
+     * @param colorFilter ColorFilter
+     * @return This Alerter
+     */
+    fun setRightIconColorFilter(colorFilter: ColorFilter): Alerter {
+        alert?.setRightIconColorFilter(colorFilter)
+
+        return this
+    }
+
+    /**
+     * Set the right icon color for the Alert
+     *
+     * @param color Color int
+     * @param mode  PorterDuff.Mode
+     * @return This Alerter
+     */
+    fun setRightIconColorFilter(@ColorInt color: Int, mode: PorterDuff.Mode): Alerter {
+        alert?.setRightIconColorFilter(color, mode)
+
+        return this
+    }
+
+    /**
+     * Set the right icons's position for the Alert
+     *
+     * @param gravity Gravity int
+     * @return This Alerter
+     */
+    fun setRightIconPosition(gravity: Int): Alerter {
+        alert?.setRightIconPosition(gravity)
+
+        return this
+    }
+
+    /**
      * Set the onClickListener for the Alert
      *
      * @param onClickListener The onClickListener for the Alert
@@ -349,6 +482,41 @@ class Alerter private constructor() {
      */
     fun showIcon(showIcon: Boolean): Alerter {
         alert?.showIcon(showIcon)
+
+        return this
+    }
+
+    /**
+     * Enable or Disable Right Icon Pulse Animations
+     *
+     * @param pulse True if the right icon should pulse
+     * @return This Alerter
+     */
+    fun enableRightIconPulse(pulse: Boolean): Alerter {
+        alert?.pulseRightIcon(pulse)
+
+        return this
+    }
+
+    /**
+     * Set whether to show the right icon in the alert or not
+     *
+     * @param showRightIcon True to show the right icon, false otherwise
+     * @return This Alerter
+     */
+    fun showRightIcon(showRightIcon: Boolean): Alerter {
+        alert?.showRightIcon(showRightIcon)
+
+        return this
+    }
+
+    /**
+     * Set whether to show the animation on focus/pressed states
+     *
+     * @param enabled True to show the animation, false otherwise
+     */
+    fun enableClickAnimation(enabled: Boolean): Alerter {
+        alert?.enableClickAnimation(enabled)
 
         return this
     }
@@ -413,6 +581,20 @@ class Alerter private constructor() {
     }
 
     /**
+     * Set sound Uri
+     * if set null, sound will be disabled
+     *
+     * @param uri To set sound Uri (raw folder)
+     * @return This Alerter
+     */
+    @JvmOverloads
+    fun setSound(uri: Uri? = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)): Alerter {
+        alert?.setSound(uri)
+
+        return this
+    }
+
+    /**
      * Disable touch events outside of the Alert
      *
      * @return This Alerter
@@ -460,13 +642,13 @@ class Alerter private constructor() {
     }
 
     /**
-     * Set if the Alert is dismissable or not
+     * Set if the Alert is dismissible or not
      *
-     * @param dismissable true if it can be dismissed
+     * @param dismissible true if it can be dismissed
      * @return This Alerter
      */
-    fun setDismissable(dismissable: Boolean): Alerter {
-        alert?.setDismissible(dismissable)
+    fun setDismissable(dismissible: Boolean): Alerter {
+        alert?.setDismissible(dismissible)
 
         return this
     }
@@ -502,8 +684,8 @@ class Alerter private constructor() {
      * @param onClick The on click listener
      */
     fun addButton(
-        text: CharSequence, @StyleRes style: Int = R.style.AlertButton,
-        onClick: View.OnClickListener
+            text: CharSequence, @StyleRes style: Int = R.style.AlertButton,
+            onClick: View.OnClickListener
     ): Alerter {
         alert?.addButton(text, style, onClick)
 
@@ -523,66 +705,132 @@ class Alerter private constructor() {
     }
 
     /**
-     * Creates a weak reference to the calling Activity
+     *  Set elevation of the alert background.
      *
-     * @param activity The calling Activity
+     *  Only available for version LOLLIPOP and above.
+     *
+     *  @param elevation Elevation value, in pixel.
      */
-    private fun setActivity(activity: Activity) {
-        activityWeakReference = WeakReference(activity)
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    fun setElevation(elevation: Float): Alerter {
+        alert?.setBackgroundElevation(elevation)
+
+        return this
+    }
+
+    fun getLayoutContainer(): View? {
+        return alert?.layoutContainer
     }
 
     companion object {
 
-        private var activityWeakReference: WeakReference<Activity>? = null
+        private var decorView: WeakReference<ViewGroup>? = null
 
         /**
-         * Creates the Alert, and maintains a reference to the calling Activity
+         * Creates the Alert
          *
          * @param activity The calling Activity
          * @return This Alerter
          */
         @JvmStatic
-        fun create(activity: Activity?): Alerter {
-            if (activity == null) {
-                throw IllegalArgumentException("Activity cannot be null!")
-            }
+        @JvmOverloads
+        fun create(activity: Activity, layoutId: Int = R.layout.alerter_alert_default_layout): Alerter {
+            return create(activity = activity, dialog = null, layoutId = layoutId)
+        }
 
+        /**
+         * Creates the Alert
+         *
+         * @param dialog The calling Dialog
+         * @return This Alerter
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun create(dialog: Dialog, layoutId: Int = R.layout.alerter_alert_default_layout): Alerter {
+            return create(activity = null, dialog = dialog, layoutId = layoutId)
+        }
+
+        /**
+         * Creates the Alert with custom view, and maintains a reference to the calling Activity or Dialog's
+         * DecorView
+         *
+         * @param activity The calling Activity
+         * @param dialog The calling Dialog
+         * @param layoutId Custom view layout res id
+         * @return This Alerter
+         */
+        @JvmStatic
+        private fun create(activity: Activity? = null, dialog: Dialog? = null, @LayoutRes layoutId: Int): Alerter {
             val alerter = Alerter()
 
             //Hide current Alert, if one is active
-            Alerter.clearCurrent(activity)
+            clearCurrent(activity, dialog)
 
-            alerter.setActivity(activity)
-            alerter.alert = Alert(activity)
+            alerter.alert = dialog?.window?.let {
+                decorView = WeakReference(it.decorView as ViewGroup)
+                Alert(context = it.decorView.context, layoutId = layoutId)
+            } ?: run {
+                activity?.window?.let {
+                    decorView = WeakReference(it.decorView as ViewGroup)
+                    Alert(context = it.decorView.context, layoutId = layoutId)
+                }
+            }
 
             return alerter
         }
 
         /**
-         * Cleans up the currently showing alert view, if one is present
+         * Cleans up the currently showing alert view, if one is present. Either pass
+         * the calling Activity, or the calling Dialog
          *
          * @param activity The current Activity
+         * @param dialog The current Dialog
+         * @param listener OnHideAlertListener to known when Alert is dismissed
          */
         @JvmStatic
-        fun clearCurrent(activity: Activity?) {
-            (activity?.window?.decorView as? ViewGroup)?.let {
-                //Find all Alert Views in Parent layout
-                for (i in 0..it.childCount) {
-                    val childView = if (it.getChildAt(i) is Alert) it.getChildAt(i) as Alert else null
-                    if (childView != null && childView.windowToken != null) {
-                        ViewCompat.animate(childView).alpha(0f).withEndAction(getRemoveViewRunnable(childView))
-                    }
-                }
-            }
+        @JvmOverloads
+        fun clearCurrent(activity: Activity?, dialog: Dialog?, listener: OnHideAlertListener? = null) {
+            dialog?.let {
+                it.window?.decorView as? ViewGroup
+            } ?: kotlin.run {
+                activity?.window?.decorView as? ViewGroup
+            }?.also {
+                removeAlertFromParent(it, listener)
+            } ?: listener?.onHide()
+        }
+
+        /**
+         * Cleans up the currently showing alert view, if one is present. Either pass
+         * the calling Activity, or the calling Dialog
+         *
+         * @param activity The current Activity
+         * @param listener OnHideAlertListener to known when Alert is dismissed
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun clearCurrent(activity: Activity?, listener: OnHideAlertListener? = null) {
+            clearCurrent(activity, null, listener)
         }
 
         /**
          * Hides the currently showing alert view, if one is present
+         * @param listener to known when Alert is dismissed
          */
         @JvmStatic
-        fun hide() {
-            activityWeakReference?.get()?.let {
-                clearCurrent(it)
+        @JvmOverloads
+        fun hide(listener: OnHideAlertListener? = null) {
+            decorView?.get()?.let {
+                removeAlertFromParent(it, listener)
+            } ?: listener?.onHide()
+        }
+
+        private fun removeAlertFromParent(decorView: ViewGroup, listener: OnHideAlertListener?) {
+            //Find all Alert Views in Parent layout
+            for (i in 0..decorView.childCount) {
+                val childView = if (decorView.getChildAt(i) is Alert) decorView.getChildAt(i) as Alert else null
+                if (childView != null && childView.windowToken != null) {
+                    ViewCompat.animate(childView).alpha(0f).withEndAction(getRemoveViewRunnable(childView, listener))
+                }
             }
         }
 
@@ -596,18 +844,19 @@ class Alerter private constructor() {
             get() {
                 var isShowing = false
 
-                activityWeakReference?.get()?.let {
+                decorView?.get()?.let {
                     isShowing = it.findViewById<View>(R.id.llAlertBackground) != null
                 }
 
                 return isShowing
             }
 
-        private fun getRemoveViewRunnable(childView: Alert?): Runnable {
+        private fun getRemoveViewRunnable(childView: Alert?, listener: OnHideAlertListener?): Runnable {
             return Runnable {
                 childView?.let {
                     (childView.parent as? ViewGroup)?.removeView(childView)
                 }
+                listener?.onHide()
             }
         }
     }

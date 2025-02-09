@@ -3,35 +3,33 @@
 This library aims to overcome the limitations of Toasts and Snackbars, while reducing the
 complexity of your layouts.
 
-[![Download](https://api.bintray.com/packages/tapadoo/maven/alerter/images/download.svg)](https://bintray.com/tapadoo/maven/alerter/_latestVersion) [![API](https://img.shields.io/badge/API-14%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Alerter-blue.svg?style=flat)](https://android-arsenal.com/details/1/5302) [![Android Weekly](https://img.shields.io/badge/Android%20Weekly-%23245-blue.svg)](http://androidweekly.net/issues/issue-245)
+[![API](https://img.shields.io/badge/API-14%2B-orange.svg?style=flat)](https://android-arsenal.com/api?level=14) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Alerter-blue.svg?style=flat)](https://android-arsenal.com/details/1/5302) [![Android Weekly](https://img.shields.io/badge/Android%20Weekly-%23245-blue.svg)](http://androidweekly.net/issues/issue-245)
 
-[![Header](./documentation/header.png)](https://play.google.com/store/apps/details?id=com.tapadoo.alerter_demo)
+![Header](./documentation/header.png)
 
 ## General
 
 With simplicity in mind, the Alerter employs the builder pattern to facilitate easy integration into any app.
-A customisable Alert view is dynamically added to the Decor View of the Window, overlaying all content. 
+A customisable Alert View is dynamically added to the Decor View of the Window, overlaying all content. 
 
-## Gradle
+## Install
+
+Include the JitPack.io Maven repo in your project's build.gradle file
 
 ```groovy
-dependencies {
-    implementation 'com.tapadoo.android:alerter:4.0.2'
+allprojects {
+ repositories {
+    maven { url "https://jitpack.io" }
+ }
 }
 ```
 
-## Kotlin
+Then add this dependency to your app's build.gradle file
 
-Version 3.0.0 and above requires Kotlin
-
-## AndroidX
-
-Version 4.0.0 includes support for AndroidX dependencies. If you experience issues with this update, 
-please ensure you have enabled AndroidX & Jetifier in your `gradle.properties` file:
-
-```properties
-android.useAndroidX=true
-android.enableJetifier=true
+```groovy
+dependencies {
+    implementation 'com.github.tapadoo:alerter:$current-version'
+}
 ```
 
 # Usage
@@ -90,6 +88,7 @@ Alerter.create(this@DemoActivity)
        .setText("Alert text...")
        .setIcon(R.drawable.alerter_ic_mail_outline)
        .setIconColorFilter(0) // Optional - Removes white tint
+       .setIconSize(R.dimen.custom_icon_size) // Optional - default is 38dp
        .show()
 ```
 
@@ -226,9 +225,22 @@ Alerter.create(this@DemoActivity)
 
 ![Verbose Alert](./documentation/alert_with_buttons.gif)
 
-## Sample
+### With Custom Layout
+```kotlin
+ Alerter.create(this@KotlinDemoActivity, R.layout.custom_layout)
+        .setBackgroundColorRes(R.color.colorAccent)
+        .also { alerter ->
+            val tvCustomView = alerter.getLayoutContainer()?.tvCustomLayout
+            tvCustomView?.setText(R.string.with_custom_layout)
+        }
+        .show()
+```
 
-Clone this repo and check out the `app-base` module.
+![Verbose Alert](./documentation/alert_with_custom_layout.gif)
+
+# Contributing & Reporting Issues
+
+[Please read this if you're reporting an issue, or thinking of contributing!](./CONTRIBUTING.md)
 
 ## Licence
 
@@ -236,4 +248,4 @@ See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
 
 Copyright 2017 Tapadoo, Dublin.
 
-![Alt Text](https://tapadoo.com/wp-content/themes/tapadoo/assets/images/tapadoo_logo_dark.png)
+<img src="https://2upm2b1wdft320vzjj34rpga-wpengine.netdna-ssl.com/wp-content/uploads/2019/12/logo-tapadoo-dark.png" width="200"/>
